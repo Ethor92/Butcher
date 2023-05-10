@@ -82,6 +82,9 @@ namespace StarterAssets
 		public Transform hideTarget = null;
 		Transform hideObject = null;
 		public bool isHiding = false;
+
+		Hideable hideable = null;
+		
 		
 
 		private bool IsCurrentDeviceMouse
@@ -125,12 +128,13 @@ namespace StarterAssets
 			JumpAndGravity();
 			GroundedCheck();
 			Move();
+			Raycast();
 
 		}
 		
 		void OnClick()
 		{
-			Raycast();
+			//Raycast();
 		}
 
 		
@@ -270,21 +274,30 @@ namespace StarterAssets
        	 	RaycastHit hit;
 			if(Physics.Raycast(ray, out hit, raycastDistance, layerMask))
 			{
-				//Debug.Log("Hit object " + hit.collider.gameObject.name);
 				//if hit object is a hideable object, get constraint
 				if(hit.collider.gameObject.GetComponent<Hideable>()){
 					
 				//get hideable object
 				hideObject = hit.collider.transform;
-				HideObjectLocation();
+				hideable = hideObject.GetComponent<Hideable>();
+
+				//is Player in range of the hideable object?
+				if(!hideable.isInRange)return; //if not return
+				
+				HideObjectLocation(); //if so, get the locator of the object for the hide cam
 				}
 			}
 		}
 
+		public bool GetCanHide()
+		{
+			return hideable.isInRange;
+		}
+
 		public void HideObjectLocation()
 		{
-			print("you are hiding in " + hideObject);
 			hideTarget = hideObject.transform.Find("HideConstraint");
+			
 			if(hideTarget == null) return;
 			else
 			{

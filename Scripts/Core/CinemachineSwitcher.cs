@@ -2,13 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using StarterAssets;
 
 public class CinemachineSwitcher : MonoBehaviour
 {
    [SerializeField] private InputAction action;
+  
+   FirstPersonController player;
    private bool playerCam = true;
-   [SerializeField] bool canHide = false;
-
+   
    private Animator animator;
 
    private void Awake()
@@ -16,7 +18,18 @@ public class CinemachineSwitcher : MonoBehaviour
     animator = GetComponent<Animator>();
    }
 
-   private void OnEnable()
+   void Start(){
+    player = GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>();
+    action.performed += _ => SwitchState();
+    
+   }
+
+   void Update()
+   {
+    
+   }
+
+   private void OnEnable() //on Input
    {
      action.Enable();
    }
@@ -24,21 +37,19 @@ public class CinemachineSwitcher : MonoBehaviour
    private void OnDisable()
    {
     action.Disable();
-   }
-
-   void Start()
-   {
-    action.performed += _ => SwitchState();
+    
    }
 
    private void SwitchState()
    {
+    if(!player.GetCanHide())return;
         if(playerCam)
         {
             animator.Play("player cam");
         }
-        else if(canHide){
+        else{
             animator.Play("hide cam");
+            print("you are hiding");
         }
         playerCam = !playerCam;
    }

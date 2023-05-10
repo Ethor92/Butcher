@@ -29,7 +29,6 @@ public class CameraConstraint : MonoBehaviour
     {
         target = controller.hideTarget;
         if(target == null) return;
-        print(target.position);
     }
 
     void SetCameraTransform()
